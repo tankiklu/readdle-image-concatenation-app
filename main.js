@@ -2,25 +2,59 @@ var canvas = document.getElementById('image');
 var ctx = canvas.getContext('2d');
 var images = [];
 var maxHeight = 450;
-var maxwidth =450;
+var maxwidth = 450;
 var offSet = 20;
 var isHorizontDirection = true;
+var imageIndex = 0;
 
+addNewImg();
 
 document.querySelector(".inputs").addEventListener('change', fileSelected, false);
+document.querySelector(".inputs").addEventListener('click', fileDel, false);
 document.querySelector(".choiceRadio").addEventListener('change', radio, false);
+document.querySelector(".button").addEventListener('click', addNewImg, false);
+
+function addNewImg() {
+
+    let html = `
+    <div class="findIndex" data-index="${imageIndex}">
+        <input type="file" ></input>
+        <button class="del">del</button>
+    </div>
+    `;
+
+    var wrapper = document.createElement('div');
+    var allInput = document.querySelector(".inputs");
+    allInput.appendChild(wrapper);
+    wrapper.outerHTML = html;
+    imageIndex++;
+}
+
+function fileDel(e) {
+    if (!e.target.classList.contains("del")) {
+        return;
+    }
+
+    var el = e.target.closest(".findIndex");
+
+    var index = el.dataset["index"];
+    delete images[index];
+    el.remove();
+    drawImages();
+}
 
 function radio(e) {
     console.log(e);
-    isHorizontDirection=!isHorizontDirection;
-   drawImages();
+    isHorizontDirection = !isHorizontDirection;
+    drawImages();
 }
 
 function fileSelected(e) {
     var selector = e.target;
-    var index = parseInt(selector.dataset["index"]);
+    var index = parseInt(selector.closest(".findIndex").dataset["index"]);
     var img = new Image;
     img.onload = function read() {
+
         images[index] = img;
         drawImages();
     }
@@ -30,10 +64,10 @@ function fileSelected(e) {
 
 
 function drawImages() {
-    if(isHorizontDirection){
+    if (isHorizontDirection) {
         horizontal();
     }
-    else{
+    else {
         vertical();
     }
 
